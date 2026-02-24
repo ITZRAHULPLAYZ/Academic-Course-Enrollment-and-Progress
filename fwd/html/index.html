@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automated Library Management System</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .panels-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .panel-card {
+            background: #1a1a2e;
+            border: 1px solid #0f3460;
+            border-radius: 10px;
+            padding: 18px;
+        }
+
+        .panel-card h3 {
+            margin: 0 0 12px;
+            color: #e94560;
+            font-size: 1rem;
+        }
+
+        #borrowHistoryList,
+        #recentlyViewedList {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        #borrowHistoryList li,
+        #recentlyViewedList li {
+            padding: 7px 10px;
+            border-bottom: 1px solid #0f3460;
+            font-size: 0.88rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .history-num {
+            background: #e94560;
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            flex-shrink: 0;
+        }
+
+        .borrow-date {
+            color: #888;
+            font-size: 0.75rem;
+            margin-left: auto;
+        }
+
+        .empty-note {
+            color: #555;
+            font-style: italic;
+        }
+
+        .undo-btn {
+            margin-top: 10px;
+            background: #c0392b;
+        }
+
+        .action-btn {
+            padding: 4px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin: 2px;
+        }
+
+        .borrow-btn {
+            background: #0f3460;
+            color: white;
+        }
+
+        .view-btn {
+            background: #1a6b3e;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #c0392b;
+            color: white;
+        }
+
+        .find-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .find-row input {
+            width: 120px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Library Management System</h1>
+        <nav>
+            <button onclick="showSection('home')">Home</button>
+            <button onclick="showSection('books')">Books</button>
+            <button onclick="showSection('users')">Users</button>
+            <button onclick="window.location.href='login.html'"
+                style="background-color:#e94560;color:white;">Login</button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- HOME -->
+        <section id="home" class="active-section">
+            <h2>Welcome</h2>
+            <p>Welcome to the Automated Library Management System.</p>
+            <p>Select a section from the navigation menu to begin.</p>
+        </section>
+
+        <!-- BOOKS -->
+        <section id="books" class="hidden">
+            <h2>Books Management</h2>
+
+            <div class="controls">
+                <h3>Add New Book</h3>
+                <input type="text" id="bookTitle" placeholder="Book Title">
+                <input type="text" id="bookAuthor" placeholder="Author Name">
+                <button onclick="addBook()">Add Book</button>
+            </div>
+
+            <div class="controls">
+                <h3>Search &amp; Sort</h3>
+                <input type="text" id="searchBookInput" placeholder="Search by title or author...">
+                <button onclick="searchBooks()">Search</button>
+                <button onclick="sortBooks()">Sort by Title</button>
+                <button onclick="renderBooks(bookCatalog.toArray())">Reset</button>
+                <div class="find-row">
+                    <input type="number" id="findByIdInput" placeholder="Book ID">
+                    <button onclick="findBookById()">Find by ID</button>
+                </div>
+            </div>
+
+            <!-- Borrow History + Recently Viewed -->
+            <div class="panels-grid">
+                <div class="panel-card">
+                    <h3>📚 Borrow History</h3>
+                    <ul id="borrowHistoryList">
+                        <li class="empty-note">No borrows yet.</li>
+                    </ul>
+                    <button class="undo-btn" onclick="undoBorrow()">↩ Undo Last Borrow</button>
+                </div>
+                <div class="panel-card">
+                    <h3>👁 Recently Viewed</h3>
+                    <ul id="recentlyViewedList">
+                        <li class="empty-note">No books viewed yet.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Book List</h3>
+            <div id="bookListContainer">
+                <table id="bookTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- USERS -->
+        <section id="users" class="hidden">
+            <h2>User Management</h2>
+
+            <div class="controls">
+                <button onclick="clearUsers()" style="background-color:#c0392b;">Clear All Users</button>
+            </div>
+
+            <h3>User List</h3>
+            <div id="userListContainer">
+                <table id="userTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="../js/dsa.js"></script>
+    <script src="../js/script.js"></script>
+</body>
+
+</html>

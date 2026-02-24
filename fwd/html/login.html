@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Library System</title>
+    <link rel="stylesheet" href="../css/login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <a href="index.html"
+        style="position: absolute; top: 20px; left: 20px; color: #fff; text-decoration: none; font-size: 1.2rem; z-index: 100;">&larr;
+        Back to Home</a>
+    <div class="container">
+        <div class="card">
+            <div class="inner-box" id="card">
+                <div class="card-front">
+                    <h2>LOGIN</h2>
+                    <form id="loginForm">
+                        <input type="text" class="input-box" placeholder="Username" required id="loginUser">
+                        <input type="password" class="input-box" placeholder="Password" required id="loginPass">
+                        <button type="submit" class="submit-btn" id="loginBtn">Log In</button>
+                        <input type="checkbox"><span>Remember Me</span>
+                    </form>
+                    <button type="button" class="btn" onclick="openRegister()">I'm New Here</button>
+                </div>
+                <div class="card-back">
+                    <h2>REGISTER</h2>
+                    <form id="registerForm">
+                        <input type="text" class="input-box" placeholder="Username" required id="regUser">
+                        <input type="email" class="input-box" placeholder="Email" required id="regEmail">
+                        <input type="password" class="input-box" placeholder="Password" required id="regPass">
+                        <button type="submit" class="submit-btn" id="regBtn">Sign Up</button>
+                    </form>
+                    <button type="button" class="btn" onclick="openLogin()">I've an Account</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- dsa.js must load first — login.js uses HashTable from it -->
+    <script src="../js/dsa.js"></script>
+    <script src="../js/login.js"></script>
+</body>
+
+</html>
