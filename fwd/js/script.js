@@ -1,24 +1,9 @@
-// ============================================================
-//  script.js  —  Library Management System (DSA-powered)
-// ============================================================
-//  DSA structures used (all from dsa.js):
-//  • SinglyLinkedList  →  Book catalog
-//  • HashTable         →  User store (auth)
-//  • Stack             →  Borrow history
-//  • CircularLinkedList→  Recently viewed books
-//  • bubbleSort()      →  Sort books by title
-//  • linearSearch()    →  Search books
-//  • binarySearch()    →  Find book by ID
-// ============================================================
-
-// ─── State ───────────────────────────────────────────────────
-var bookCatalog = new SinglyLinkedList();  // replaces plain books[]
-var userHashTable = new HashTable(64);       // replaces plain users[]
-var borrowStack = new Stack();             // borrow history
-var recentlyViewed = new CircularLinkedList(5); // last 5 viewed books
+var bookCatalog = new ArrayList();
+var userHashTable = new HashTable(64);
+var borrowStack = new Stack();
+var recentlyViewed = new CircularLinkedList(5);
 var bookIdCounter = 1;
 
-// ─── Persist / Restore from localStorage ─────────────────────
 function saveState() {
     localStorage.setItem('bookCatalog', JSON.stringify(bookCatalog.toJSON()));
     localStorage.setItem('userHashTable', JSON.stringify(userHashTable.toJSON()));
@@ -33,7 +18,7 @@ function loadState() {
     const bs = localStorage.getItem('borrowStack');
     const rv = localStorage.getItem('recentlyViewed');
 
-    if (bc) { bookCatalog = SinglyLinkedList.fromJSON(JSON.parse(bc)); }
+    if (bc) { bookCatalog = ArrayList.fromJSON(JSON.parse(bc)); }
     if (uht) { userHashTable = HashTable.fromJSON(JSON.parse(uht)); }
     if (bs) { borrowStack = Stack.fromJSON(JSON.parse(bs)); }
     if (rv) { recentlyViewed = CircularLinkedList.fromJSON(JSON.parse(rv), 5); }
@@ -42,7 +27,6 @@ function loadState() {
     if (ctr) bookIdCounter = parseInt(ctr);
 }
 
-// ─── Authentication Check ─────────────────────────────────────
 function checkAuth() {
     var user = localStorage.getItem('currentUser');
     var nav = document.querySelector('nav');
@@ -60,23 +44,19 @@ function checkAuth() {
     }
 }
 
-// ─── Init ─────────────────────────────────────────────────────
 window.onload = function () {
     loadState();
     checkAuth();
 
-    // Navigate to section from URL param
     const section = new URLSearchParams(window.location.search).get('section');
     if (section) showSection(section);
 
-    // Seed default books if catalog empty
     if (bookCatalog.size === 0) {
-        bookCatalog.insert({ id: bookIdCounter++, title: 'Introduction to Algorithms', author: 'Cormen' });
-        bookCatalog.insert({ id: bookIdCounter++, title: 'Clean Code', author: 'Robert Martin' });
-        bookCatalog.insert({ id: bookIdCounter++, title: 'Design Patterns', author: 'Gamma' });
+        bookCatalog.add({ id: bookIdCounter++, title: 'Introduction to Algorithms', author: 'Cormen' });
+        bookCatalog.add({ id: bookIdCounter++, title: 'Clean Code', author: 'Robert Martin' });
+        bookCatalog.add({ id: bookIdCounter++, title: 'Design Patterns', author: 'Gamma' });
     }
 
-    // Seed default users into HashTable if empty
     if (!userHashTable.containsKey('admin@library.com')) {
         userHashTable.put('admin@library.com', {
             id: 0, name: 'Admin', email: 'admin@library.com',
@@ -99,15 +79,13 @@ window.onload = function () {
     renderRecentlyViewed();
 };
 
-// ─── Navigation ───────────────────────────────────────────────
 function showSection(id) {
-    ['home', 'books', 'users', 'dsa-tools'].forEach(s => {
+    ['home', 'books', 'users'].forEach(s => {
         const el = document.getElementById(s);
         if (el) el.style.display = (s === id) ? 'block' : 'none';
     });
 }
 
-// ─── Book Logic ───────────────────────────────────────────────
 function addBook() {
     if (!localStorage.getItem('currentUser')) {
         alert('You must be logged in to add books!');
@@ -118,7 +96,7 @@ function addBook() {
     if (!title || !author) { alert('Please fill in all fields.'); return; }
 
     var book = { id: bookIdCounter++, title: title, author: author };
-    bookCatalog.insert(book);  // ← SinglyLinkedList.insert()
+    bookCatalog.add(book);
     document.getElementById('bookTitle').value = '';
     document.getElementById('bookAuthor').value = '';
     saveState();
@@ -128,7 +106,7 @@ function addBook() {
 
 function deleteBook(id) {
     if (!localStorage.getItem('currentUser')) { alert('Login required.'); return; }
-    bookCatalog.delete(id);    // ← SinglyLinkedList.delete()
+    bookCatalog.remove(id);
     saveState();
     renderBooks(bookCatalog.toArray());
 }
@@ -153,29 +131,15 @@ function renderBooks(list) {
     }
 }
 
-// Search books by title or author
 function searchBooks() {
-    var query = document.getElementById('searchBookInput').value.trim();
+    var query = document.getElementById('searchBookInput').value.trim().toLowerCase();
     if (!query) { renderBooks(bookCatalog.toArray()); return; }
-    var results = linearSearch(bookCatalog.toArray(), query);
+    var results = bookCatalog.toArray().filter(b =>
+        b.title.toLowerCase().includes(query) || b.author.toLowerCase().includes(query)
+    );
     renderBooks(results);
 }
 
-function sortBooks() {
-    var sorted = bubbleSort(bookCatalog.toArray());
-    renderBooks(sorted);
-}
-
-function findBookById() {
-    var id = parseInt(document.getElementById('findByIdInput').value.trim());
-    if (isNaN(id)) { alert('Enter a valid book ID.'); return; }
-    var sortedById = bookCatalog.toArray().sort((a, b) => a.id - b.id);
-    var found = binarySearch(sortedById, id);
-    if (found) { renderBooks([found]); }
-    else { alert('No book found with ID ' + id + '.'); renderBooks([]); }
-}
-
-// STACK — Borrow a book (push)
 function borrowBook(id) {
     if (!localStorage.getItem('currentUser')) {
         alert('You must be logged in to borrow books!');
@@ -190,7 +154,6 @@ function borrowBook(id) {
     alert('"' + book.title + '" borrowed!');
 }
 
-// STACK — Undo last borrow (pop)
 function undoBorrow() {
     if (borrowStack.isEmpty()) { alert('No borrow history to undo.'); return; }
     var last = borrowStack.pop();
@@ -202,7 +165,7 @@ function undoBorrow() {
 function renderBorrowHistory() {
     var list = document.getElementById('borrowHistoryList');
     if (!list) return;
-    var items = borrowStack.toArray(); // top of stack first
+    var items = borrowStack.toArray();
     if (items.length === 0) {
         list.innerHTML = '<li class="empty-note">No borrow history yet. Borrow a book!</li>';
         return;
@@ -216,7 +179,6 @@ function renderBorrowHistory() {
     ).join('');
 }
 
-// CIRCULAR LINKED LIST — View a book (insert into recently viewed)
 function viewBook(id) {
     var book = bookCatalog.find(id);
     if (!book) return;
@@ -228,7 +190,7 @@ function viewBook(id) {
 function renderRecentlyViewed() {
     var list = document.getElementById('recentlyViewedList');
     if (!list) return;
-    var items = recentlyViewed.toArray(); // ← CircularLinkedList.toArray()
+    var items = recentlyViewed.toArray();
     if (items.length === 0) {
         list.innerHTML = '<li class="empty-note">No books viewed yet. Click 👁 View on any book!</li>';
         return;
@@ -238,14 +200,11 @@ function renderRecentlyViewed() {
     ).join('');
 }
 
-// ─── User Logic ───────────────────────────────────────────────
 function renderUsers() {
     var tbody = document.getElementById('userTableBody');
     if (!tbody) return;
     tbody.innerHTML = '';
     var role = localStorage.getItem('currentRole');
-
-    // Pull all users from HashTable
     var allUsers = userHashTable.toJSON().map(e => e.value);
 
     for (var i = 0; i < allUsers.length; i++) {
@@ -269,11 +228,11 @@ function banUser(email) {
     if (localStorage.getItem('currentRole') !== 'admin') {
         alert('Only Admins can ban users!'); return;
     }
-    var user = userHashTable.get(email); // ← HashTable.get()
+    var user = userHashTable.get(email);
     if (!user) return;
     if (user.role === 'admin') { alert('Cannot ban an Admin.'); return; }
     user.isBanned = true;
-    userHashTable.put(email, user); // ← HashTable.put() (update)
+    userHashTable.put(email, user);
     saveState();
     renderUsers();
     alert(user.name + ' has been banned.');
@@ -285,7 +244,6 @@ function clearUsers() {
     }
     if (!confirm('Delete ALL non-admin users? This cannot be undone.')) return;
 
-    // Rebuild HashTable keeping only admin
     var newHT = new HashTable(64);
     newHT.put('admin@library.com', {
         id: 0, name: 'Admin', email: 'admin@library.com',
@@ -295,14 +253,4 @@ function clearUsers() {
     saveState();
     renderUsers();
     alert('User database cleared (Admin preserved).');
-}
-
-// ─── DSA Tools Panel ─────────────────────────────────────────
-// INFIX TO POSTFIX (uses our Stack class internally in dsa.js)
-function convertExpression() {
-    var input = document.getElementById('infixInput').value.trim();
-    var output = document.getElementById('postfixOutput');
-    if (!input) { output.textContent = 'Enter an expression first.'; return; }
-    var result = infixToPostfix(input); // ← infixToPostfix() using Stack
-    output.textContent = result;
 }

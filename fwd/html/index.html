@@ -98,16 +98,6 @@
             background: #c0392b;
             color: white;
         }
-
-        .find-row {
-            display: flex;
-            gap: 8px;
-            margin-top: 8px;
-        }
-
-        .find-row input {
-            width: 120px;
-        }
     </style>
 </head>
 
@@ -124,14 +114,12 @@
     </header>
 
     <main>
-        <!-- HOME -->
         <section id="home" class="active-section">
             <h2>Welcome</h2>
             <p>Welcome to the Automated Library Management System.</p>
             <p>Select a section from the navigation menu to begin.</p>
         </section>
 
-        <!-- BOOKS -->
         <section id="books" class="hidden">
             <h2>Books Management</h2>
 
@@ -143,18 +131,12 @@
             </div>
 
             <div class="controls">
-                <h3>Search &amp; Sort</h3>
+                <h3>Search Books</h3>
                 <input type="text" id="searchBookInput" placeholder="Search by title or author...">
                 <button onclick="searchBooks()">Search</button>
-                <button onclick="sortBooks()">Sort by Title</button>
                 <button onclick="renderBooks(bookCatalog.toArray())">Reset</button>
-                <div class="find-row">
-                    <input type="number" id="findByIdInput" placeholder="Book ID">
-                    <button onclick="findBookById()">Find by ID</button>
-                </div>
             </div>
 
-            <!-- Borrow History + Recently Viewed -->
             <div class="panels-grid">
                 <div class="panel-card">
                     <h3>📚 Borrow History</h3>
@@ -187,7 +169,6 @@
             </div>
         </section>
 
-        <!-- USERS -->
         <section id="users" class="hidden">
             <h2>User Management</h2>
 

@@ -38,7 +38,7 @@ public class UserAuthentication {
             System.out.println("\n1. Register\n2. Login\n3. Exit");
             System.out.print("Choose an option: ");
             int choice = scanner.nextInt();
-            scanner.nextLine(); // consume newline
+            scanner.nextLine();
 
             if (choice == 1) {
                 System.out.print("Enter username: ");

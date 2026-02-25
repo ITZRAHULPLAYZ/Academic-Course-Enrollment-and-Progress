@@ -46,7 +46,6 @@ public class CircularLinkedList {
         Node current = head;
         Node prev = tail;
 
-        // If only one node
         if (head == tail) {
             if (head.data == key) {
                 head = null;
@@ -55,7 +54,6 @@ public class CircularLinkedList {
             return;
         }
 
-        // Search for node
         do {
             if (current.data == key) {
                 if (current == head) {
@@ -84,12 +82,12 @@ public class CircularLinkedList {
         System.out.println("Circular Linked List:");
         cll.display();
 
-        System.out.println("\nDeleting 20:");
         cll.delete(20);
+        System.out.println("After deleting 20:");
         cll.display();
 
-        System.out.println("\nDeleting 10 (Head):");
         cll.delete(10);
+        System.out.println("After deleting 10:");
         cll.display();
     }
 }
