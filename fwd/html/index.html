@@ -6,7 +6,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Automated Library Management System</title>
     <link rel="stylesheet" href="../css/style.css">
-    <style>
+     <style>
+        .home-hero {
+            text-align: center;
+            padding: 48px 20px 36px;
+            margin-bottom: 28px;
+        }
+        .hero-icon { font-size: 3rem; line-height: 1; margin-bottom: 12px; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5)); }
+        .hero-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #e8e4de;
+            margin: 0 0 10px;
+            border: none;
+            padding: 0;
+            letter-spacing: -0.5px;
+        }
+        .hero-sub { color: rgba(200,210,230,0.5); font-size: 0.95rem; margin: 0; }
+
+        .stat-cards {
+            display: flex;
+            gap: 14px;
+            margin-bottom: 10px;
+        }
+        .stat-card {
+            flex: 1;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 12px;
+            padding: 20px 12px;
+            text-align: center;
+            transition: background 0.2s ease, transform 0.18s ease;
+        }
+        .stat-card:hover {
+            background: rgba(255,255,255,0.12);
+            transform: translateY(-3px);
+        }
+        .stat-icon { font-size: 1.5rem; }
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #7eb8f7;
+            line-height: 1.2;
+            margin: 6px 0 3px;
+        }
+        .stat-label { font-size: 0.72rem; color: rgba(180,200,230,0.4); text-transform: uppercase; letter-spacing: 1px; }
+
+
         .panels-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -115,9 +161,29 @@
 
     <main>
         <section id="home" class="active-section">
-            <h2>Welcome</h2>
-            <p>Welcome to the Automated Library Management System.</p>
-            <p>Select a section from the navigation menu to begin.</p>
+            <div class="home-hero">
+                <div class="hero-icon">📚</div>
+                <h2 class="hero-title">Library Management System</h2>
+                <p class="hero-sub">Your digital gateway to books, users, and borrowing — all in one place.</p>
+            </div>
+
+            <div class="stat-cards">
+                <div class="stat-card">
+                    <span class="stat-icon">🗂️</span>
+                    <div class="stat-value" id="statBooks">0</div>
+                    <div class="stat-label">Total Books</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">👥</span>
+                    <div class="stat-value" id="statUsers">0</div>
+                    <div class="stat-label">Registered Users</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">📖</span>
+                    <div class="stat-value" id="statBorrowed">0</div>
+                    <div class="stat-label">Books Borrowed</div>
+                </div>
+            </div>
         </section>
 
         <section id="books" class="hidden">
