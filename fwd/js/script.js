@@ -77,7 +77,17 @@ window.onload = function () {
     renderUsers();
     renderBorrowHistory();
     renderRecentlyViewed();
+    renderHomeStats();
 };
+
+function renderHomeStats() {
+    var booksEl = document.getElementById('statBooks');
+    var usersEl = document.getElementById('statUsers');
+    var borrowedEl = document.getElementById('statBorrowed');
+    if (booksEl) booksEl.textContent = bookCatalog.size;
+    if (usersEl) usersEl.textContent = userHashTable.toJSON().length;
+    if (borrowedEl) borrowedEl.textContent = borrowStack.toArray().length;
+}
 
 function showSection(id) {
     ['home', 'books', 'users'].forEach(s => {
@@ -151,6 +161,7 @@ function borrowBook(id) {
     borrowStack.push({ bookId: book.id, title: book.title, borrowedAt: new Date().toLocaleString() });
     saveState();
     renderBorrowHistory();
+    renderHomeStats();
     alert('"' + book.title + '" borrowed!');
 }
 
@@ -159,6 +170,7 @@ function undoBorrow() {
     var last = borrowStack.pop();
     saveState();
     renderBorrowHistory();
+    renderHomeStats();
     alert('"' + last.title + '" removed from borrow history.');
 }
 
